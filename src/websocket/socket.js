@@ -888,6 +888,12 @@ function initializeSocketServer(server) {
         socket.emit('error', { message: 'Failed to update encrypted presence preferences' });
       }
     });
+
+    socket.on("chatMessage", (msg) => {
+      console.log(`Message received: ${msg}`);
+      io.emit("chatMessage", msg);
+    });
+
   });
 
   return io;
