@@ -80,6 +80,7 @@ const createRedisClient = () => {
   return createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379',
     socket: {
+      rejectUnauthorized: false,
       reconnectStrategy: (retries) => {
         // Exponential backoff with max delay of 10 seconds
         const delay = Math.min(Math.pow(2, retries) * 100, 10000);
