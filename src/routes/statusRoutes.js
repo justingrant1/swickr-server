@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const auth = require('../middleware/auth');
-const { io } = require('../socket');
+const {authenticateJWT} = require('../middleware/auth');
+const { io } = require('../websocket/socket');
 
 /**
  * @route   GET /api/status
  * @desc    Get current user's status details
  * @access  Private
  */
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
   try {
     const statusDetails = await User.getStatusDetails(req.user.id);
     res.json(statusDetails);
@@ -24,7 +24,7 @@ router.get('/', auth, async (req, res) => {
  * @desc    Get a user's status details
  * @access  Private
  */
-router.get('/:userId', auth, async (req, res) => {
+router.get('/:userId', authenticateJWT, async (req, res) => {
   try {
     const statusDetails = await User.getStatusDetails(req.params.userId);
     res.json(statusDetails);
@@ -39,7 +39,7 @@ router.get('/:userId', auth, async (req, res) => {
  * @desc    Update user's status
  * @access  Private
  */
-router.put('/', auth, async (req, res) => {
+router.put('/', authenticateJWT, async (req, res) => {
   try {
     const { status } = req.body;
     
@@ -67,7 +67,7 @@ router.put('/', auth, async (req, res) => {
  * @desc    Set a custom status message
  * @access  Private
  */
-router.post('/custom', auth, async (req, res) => {
+router.post('/custom', authenticateJWT, async (req, res) => {
   try {
     const { statusMessage, emoji } = req.body;
     
@@ -97,7 +97,7 @@ router.post('/custom', auth, async (req, res) => {
  * @desc    Clear custom status message
  * @access  Private
  */
-router.delete('/custom', auth, async (req, res) => {
+router.delete('/custom', authenticateJWT, async (req, res) => {
   try {
     const { newStatus = 'online' } = req.body;
     
@@ -121,7 +121,7 @@ router.delete('/custom', auth, async (req, res) => {
  * @desc    Get user's status history
  * @access  Private
  */
-router.get('/history', auth, async (req, res) => {
+router.get('/history', authenticateJWT, async (req, res) => {
   try {
     const { limit = 10 } = req.query;
     

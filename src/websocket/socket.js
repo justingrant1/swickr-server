@@ -29,9 +29,11 @@ const encryptedPresencePreferences = new Map();
 const AWAY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
 const OFFLINE_GRACE_PERIOD = 5 * 1000; // 5 seconds
 
+let io = null
+
 // Initialize socket.io server
 function initializeSocketServer(server) {
-  const io = socketIo(server, {
+  io = socketIo(server, {
     cors: {
       origin: '*',
       methods: ['GET', 'POST']
@@ -948,4 +950,4 @@ async function notifyConversationParticipants(io, conversationId, userId, action
   }
 }
 
-module.exports = { initializeSocketServer };
+module.exports = { initializeSocketServer, io };

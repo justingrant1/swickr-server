@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../../middleware/auth');
+const {authenticateJWT} = require('../../middleware/auth');
 const { ApiError } = require('../../middleware/errorHandler');
 const logger = require('../../utils/logger');
 const Contact = require('../../models/Contact');
 const User = require('../../models/User');
 
 // Apply authentication middleware to all contact routes
-router.use(auth);
+router.use(authenticateJWT);
 
 /**
  * Get user contacts

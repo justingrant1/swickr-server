@@ -352,7 +352,8 @@ const initDatabase = async () => {
         status VARCHAR(20) DEFAULT 'offline',
         last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     

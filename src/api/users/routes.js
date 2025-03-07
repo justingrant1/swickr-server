@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../../middleware/auth');
+const {authenticateJWT} = require('../../middleware/auth');
 const User = require('../../models/User');
 const { ApiError } = require('../../middleware/errorHandler');
 const logger = require('../../utils/logger');
@@ -10,7 +10,7 @@ const logger = require('../../utils/logger');
  * @desc Get the current user's profile
  * @access Private
  */
-router.get('/profile', auth, async (req, res, next) => {
+router.get('/profile', authenticateJWT, async (req, res, next) => {
   try {
     const userId = req.user.userId;
     logger.debug('Fetching profile for user ID:', userId);
@@ -40,7 +40,7 @@ router.get('/profile', auth, async (req, res, next) => {
  * @desc Update the current user's profile
  * @access Private
  */
-router.put('/profile', auth, async (req, res, next) => {
+router.put('/profile', authenticateJWT, async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { fullName, profilePicture, status } = req.body;
@@ -71,7 +71,7 @@ router.put('/profile', auth, async (req, res, next) => {
  * @desc Get online status for a list of users
  * @access Private
  */
-router.get('/status', auth, async (req, res, next) => {
+router.get('/status', authenticateJWT, async (req, res, next) => {
   try {
     const userIds = req.query.ids;
     
@@ -97,7 +97,7 @@ router.get('/status', auth, async (req, res, next) => {
  * @desc Search for users by username or full name
  * @access Private
  */
-router.get('/search', auth, async (req, res, next) => {
+router.get('/search', authenticateJWT, async (req, res, next) => {
   try {
     const { query } = req.query;
     
@@ -123,7 +123,7 @@ router.get('/search', auth, async (req, res, next) => {
  * @desc Get a user's public profile
  * @access Private
  */
-router.get('/:id', auth, async (req, res, next) => {
+router.get('/:id', authenticateJWT, async (req, res, next) => {
   try {
     const { id } = req.params;
     
