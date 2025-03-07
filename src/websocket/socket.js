@@ -1,4 +1,4 @@
-const socketIo = require('socket.io');
+const { Server } = require("socket.io");
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 const Message = require('../models/Message');
@@ -33,7 +33,8 @@ let io = null
 
 // Initialize socket.io server
 function initializeSocketServer(server) {
-  io = socketIo(server, {
+
+  io = new Server(server, {
     cors: {
       origin: '*',
       methods: ['GET', 'POST']
@@ -887,6 +888,12 @@ function initializeSocketServer(server) {
         socket.emit('error', { message: 'Failed to update encrypted presence preferences' });
       }
     });
+
+    socket.on("chatMessage", (msg) => {
+      console.log(`Message received: ${msg}`);
+      io.emit("chatMessage", msg);
+    });
+
   });
 
   return io;
