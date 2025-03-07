@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const reactionsController = require('./controller');
-const { authenticate } = require('../../middleware/auth');
+const { authenticateJWT } = require('../../middleware/auth');
 
 /**
  * Reactions Routes
@@ -10,7 +10,7 @@ const { authenticate } = require('../../middleware/auth');
  */
 
 // All routes require authentication
-router.use(authenticate);
+router.use(authenticateJWT);
 
 /**
  * @route   GET /api/reactions/message/:messageId

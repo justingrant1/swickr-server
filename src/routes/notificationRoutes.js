@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const {authenticateJWT} = require('../middleware/auth');
 const notificationService = require('../services/NotificationService');
-const { io } = require('../socket');
+const { io } = require('../websocket/socket');
 const logger = require('../utils/logger');
 const clientEventsRouter = require('../api/notifications/client-events');
 const performanceTestRouter = require('../api/notifications/performance-test');
@@ -26,7 +26,7 @@ router.use('/performance', performanceRouter);
  * @desc    Get VAPID public key for push notifications
  * @access  Private
  */
-router.get('/vapid-public-key', auth, (req, res) => {
+router.get('/vapid-public-key', authenticateJWT, (req, res) => {
   try {
     if (!process.env.VAPID_PUBLIC_KEY) {
       return res.status(500).json({
@@ -46,7 +46,7 @@ router.get('/vapid-public-key', auth, (req, res) => {
  * @desc    Subscribe to push notifications
  * @access  Private
  */
-router.post('/subscribe', auth, async (req, res) => {
+router.post('/subscribe', authenticateJWT, async (req, res) => {
   try {
     const { subscription } = req.body;
     
@@ -79,7 +79,7 @@ router.post('/subscribe', auth, async (req, res) => {
  * @desc    Unsubscribe from push notifications
  * @access  Private
  */
-router.post('/unsubscribe', auth, async (req, res) => {
+router.post('/unsubscribe', authenticateJWT, async (req, res) => {
   try {
     const { endpoint } = req.body;
     
@@ -107,7 +107,7 @@ router.post('/unsubscribe', auth, async (req, res) => {
  * @desc    Get all push subscriptions for the user
  * @access  Private
  */
-router.get('/subscriptions', auth, async (req, res) => {
+router.get('/subscriptions', authenticateJWT, async (req, res) => {
   try {
     const subscriptions = await notificationService.getUserSubscriptions(req.user.id);
     res.json(subscriptions);
@@ -122,7 +122,7 @@ router.get('/subscriptions', auth, async (req, res) => {
  * @desc    Get notification settings for the user
  * @access  Private
  */
-router.get('/settings', auth, async (req, res) => {
+router.get('/settings', authenticateJWT, async (req, res) => {
   try {
     const settings = await notificationService.getNotificationSettings(req.user.id);
     res.json(settings);
@@ -137,7 +137,7 @@ router.get('/settings', auth, async (req, res) => {
  * @desc    Update notification settings for the user
  * @access  Private
  */
-router.put('/settings', auth, async (req, res) => {
+router.put('/settings', authenticateJWT, async (req, res) => {
   try {
     const settings = req.body;
     const validSettings = [
@@ -176,7 +176,7 @@ router.put('/settings', auth, async (req, res) => {
  * @desc    Get notifications for the user
  * @access  Private
  */
-router.get('/', auth, async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
   try {
     const { limit = 50, offset = 0, unreadOnly = false } = req.query;
     const options = {
@@ -202,7 +202,7 @@ router.get('/', auth, async (req, res) => {
  * @desc    Get count of unread notifications
  * @access  Private
  */
-router.get('/unread-count', auth, async (req, res) => {
+router.get('/unread-count', authenticateJWT, async (req, res) => {
   try {
     const count = await notificationService.getUnreadCount(req.user.id);
     res.json({ count });
@@ -217,7 +217,7 @@ router.get('/unread-count', auth, async (req, res) => {
  * @desc    Mark a notification as read
  * @access  Private
  */
-router.put('/:id/read', auth, async (req, res) => {
+router.put('/:id/read', authenticateJWT, async (req, res) => {
   try {
     const notificationId = req.params.id;
     
@@ -248,12 +248,12 @@ router.put('/:id/read', auth, async (req, res) => {
  * @desc    Mark all notifications as read
  * @access  Private
  */
-router.put('/read-all', auth, async (req, res) => {
+router.put('/read-all', authenticateJWT, async (req, res) => {
   try {
     const count = await notificationService.markAllAsRead(req.user.id);
     
     // Emit socket event to update UI in real-time
-    io.to(req.user.id).emit('notifications_updated', { 
+    io.to(req.user.id).emit('notifications_updated', {
       type: 'read_all', 
       count 
     });
@@ -270,7 +270,7 @@ router.put('/read-all', auth, async (req, res) => {
  * @desc    Delete a notification
  * @access  Private
  */
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', authenticateJWT, async (req, res) => {
   try {
     const notificationId = req.params.id;
     
@@ -281,7 +281,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     if (success) {
       // Emit socket event to update UI in real-time
-      io.to(req.user.id).emit('notifications_updated', { 
+      io.to(req.user.id).emit('notifications_updated', {
         type: 'delete', 
         ids: [notificationId]
       });
@@ -301,7 +301,7 @@ router.delete('/:id', auth, async (req, res) => {
  * @desc    Send a test notification to the current user
  * @access  Private
  */
-router.post('/test', auth, async (req, res) => {
+router.post('/test', authenticateJWT, async (req, res) => {
   try {
     const userId = req.user.id;
     const result = await notificationService.sendTestNotification(userId);

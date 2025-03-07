@@ -1,5 +1,5 @@
 const express = require('express');
-const auth = require('../../middleware/auth');
+const {authenticateJWT} = require('../../middleware/auth');
 const Message = require('../../models/Message');
 const logger = require('../../utils/logger');
 const { ApiError } = require('../../middleware/errorHandler');
@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
 // Apply authentication middleware to all routes
-router.use(auth);
+router.use(authenticateJWT);
 
 /**
  * @route GET /api/conversations

@@ -13,7 +13,7 @@ const {
   getMediaStats,
   regenerateThumbnails
 } = require('./controller');
-const { authenticate } = require('../../middleware/auth');
+const { authenticateJWT } = require('../../middleware/auth');
 const cache = require('../../utils/cache');
 const performanceTracker = require('../../utils/performanceTracker');
 
@@ -181,55 +181,55 @@ const trackPerformance = (operationName) => {
  * @desc Upload a single media file
  * @access Private
  */
-router.post('/upload', authenticate, upload.single('file'), handleMulterError, trackPerformance('upload'), uploadMedia);
+router.post('/upload', authenticateJWT, upload.single('file'), handleMulterError, trackPerformance('upload'), uploadMedia);
 
 /**
  * @route POST /api/media/upload/batch
  * @desc Upload multiple media files
  * @access Private
  */
-router.post('/upload/batch', authenticate, upload.array('files', 10), handleMulterError, trackPerformance('uploadBatch'), uploadMediaBatch);
+router.post('/upload/batch', authenticateJWT, upload.array('files', 10), handleMulterError, trackPerformance('uploadBatch'), uploadMediaBatch);
 
 /**
  * @route GET /api/media/thumbnail/:id
  * @desc Get media thumbnail by ID
  * @access Private (with authentication)
  */
-router.get('/thumbnail/:id', authenticate, cacheMiddleware, trackPerformance('getThumbnail'), getMediaThumbnail);
+router.get('/thumbnail/:id', authenticateJWT, cacheMiddleware, trackPerformance('getThumbnail'), getMediaThumbnail);
 
 /**
  * @route GET /api/media/conversation/:conversationId
  * @desc Get all media for a conversation
  * @access Private
  */
-router.get('/conversation/:conversationId', authenticate, cacheMiddleware, trackPerformance('getConversationMedia'), getMediaForConversation);
+router.get('/conversation/:conversationId', authenticateJWT, cacheMiddleware, trackPerformance('getConversationMedia'), getMediaForConversation);
 
 /**
  * @route GET /api/media/:id
  * @desc Get media file by ID
  * @access Private (with authentication)
  */
-router.get('/:id', authenticate, cacheMiddleware, trackPerformance('getMedia'), getMediaById);
+router.get('/:id', authenticateJWT, cacheMiddleware, trackPerformance('getMedia'), getMediaById);
 
 /**
  * @route DELETE /api/media/:id
  * @desc Delete media file
  * @access Private
  */
-router.delete('/:id', authenticate, trackPerformance('deleteMedia'), deleteMedia);
+router.delete('/:id', authenticateJWT, trackPerformance('deleteMedia'), deleteMedia);
 
 /**
  * @route GET /api/media/stats
  * @desc Get media performance statistics
  * @access Private (admin only)
  */
-router.get('/stats', authenticate, getMediaStats);
+router.get('/stats', authenticateJWT, getMediaStats);
 
 /**
  * @route POST /api/media/regenerate-thumbnails
  * @desc Regenerate thumbnails for existing media
  * @access Private (admin only)
  */
-router.post('/regenerate-thumbnails', authenticate, trackPerformance('regenerateThumbnails'), regenerateThumbnails);
+router.post('/regenerate-thumbnails', authenticateJWT, trackPerformance('regenerateThumbnails'), regenerateThumbnails);
 
 module.exports = router;

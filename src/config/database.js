@@ -312,6 +312,9 @@ if (useMockDatabase) {
     max: 20, // Maximum number of clients in the pool
     idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
     connectionTimeoutMillis: 2000, // How long to wait for a connection
+    ssl: {
+      rejectUnauthorized: false,
+    }
   });
 
   // Test the database connection
@@ -352,7 +355,8 @@ const initDatabase = async () => {
         status VARCHAR(20) DEFAULT 'offline',
         last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
     
