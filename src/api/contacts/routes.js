@@ -208,7 +208,7 @@ router.get('/search', async (req, res, next) => {
     }
     
     // Search users in database
-    const users = await User.search(query, 10);
+    const users = await User.search(query, userId);
     
     // Filter out the current user
     const filteredUsers = users.filter(user => user.id !== userId);
