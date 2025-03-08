@@ -16,7 +16,7 @@ const logger = require('../../utils/logger');
  * @desc Get notification performance metrics
  * @access Admin only
  */
-router.get('/performance', authenticateJWT, requireAdmin, async (req, res) => {
+router.get('/', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const metrics = await NotificationPerformanceMonitor.getPerformanceMetrics();
     res.json({ success: true, metrics });
@@ -31,7 +31,7 @@ router.get('/performance', authenticateJWT, requireAdmin, async (req, res) => {
  * @desc Get detailed notification performance report for a specific time period
  * @access Admin only
  */
-router.get('/performance/report', authenticateJWT, requireAdmin, async (req, res) => {
+router.get('/report', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const { startTime, endTime } = req.query;
     
@@ -52,7 +52,7 @@ router.get('/performance/report', authenticateJWT, requireAdmin, async (req, res
  * @desc Reset notification performance metrics
  * @access Admin only
  */
-router.post('/performance/reset', authenticateJWT, requireAdmin, async (req, res) => {
+router.post('/reset', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const success = await NotificationPerformanceMonitor.resetMetrics();
     res.json({ success });
@@ -67,7 +67,7 @@ router.post('/performance/reset', authenticateJWT, requireAdmin, async (req, res
  * @desc Get recent notification events
  * @access Admin only
  */
-router.get('/performance/events', authenticateJWT, requireAdmin, async (req, res) => {
+router.get('/events', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const { limit } = req.query;
     const events = await NotificationPerformanceMonitor.getRecentEvents(parseInt(limit) || 100);
@@ -83,7 +83,7 @@ router.get('/performance/events', authenticateJWT, requireAdmin, async (req, res
  * @desc Get hourly notification statistics
  * @access Admin only
  */
-router.get('/performance/hourly', authenticateJWT, requireAdmin, async (req, res) => {
+router.get('/hourly', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
@@ -104,7 +104,7 @@ router.get('/performance/hourly', authenticateJWT, requireAdmin, async (req, res
  * @desc Get daily notification statistics
  * @access Admin only
  */
-router.get('/performance/daily', authenticateJWT, requireAdmin, async (req, res) => {
+router.get('/daily', authenticateJWT, requireAdmin, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
